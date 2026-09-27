@@ -22,11 +22,11 @@ def test_generator_answers_from_labeled_retrieved_evidence() -> None:
 
     answer = generator.generate("How does it model sequences?", [source])
 
-    assert answer == "Self-attention models dependencies [S1]."
+    assert answer == "Self-attention models dependencies. [S1]"
     assert "How does it model sequences?" in calls[0][0]
-    assert "[S1] Attention Is All You Need — Sequence modeling" in calls[0][0]
+    assert "Attention Is All You Need — Sequence modeling" in calls[0][0]
     assert "without recurrence" in calls[0][0]
-    assert calls[0][1] == {"max_new_tokens": 180, "do_sample": False, "truncation": True}
+    assert calls[0][1] == {"max_new_tokens": 120, "do_sample": False, "truncation": True}
 
 
 def test_generator_does_not_load_model_without_retrieved_evidence() -> None:

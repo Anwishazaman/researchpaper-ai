@@ -27,6 +27,11 @@ dev = ["pytest==8.3.5", "httpx==0.28.1", "ruff==0.11.2", "debugpy==1.8.21"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+exclude = ["tests*"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
