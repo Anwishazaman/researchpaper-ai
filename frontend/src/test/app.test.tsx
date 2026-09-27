@@ -33,6 +33,11 @@ function installApiResponses(): void {
     if (url.pathname === '/api/health') return jsonResponse({ status: 'ready', corpus_ready: true });
     if (url.pathname === '/api/papers') return jsonResponse({ items: demoPapers });
     if (url.pathname === '/api/search') return jsonResponse({ results: searchResults });
+    if (url.pathname === '/api/answer') return jsonResponse({
+      answer: 'Self-attention models dependencies without recurrence [S1].',
+      model: 'google/flan-t5-small',
+      sources: searchResults,
+    });
     if (url.pathname === '/api/evaluation') return jsonResponse({ runs: evaluationRuns });
     return jsonResponse({ error: { message: 'Not found' } }, 404);
   }));
@@ -56,6 +61,16 @@ describe('ResearchPaper AI frontend', () => {
     expect(screen.getByText('How does attention improve sequence modeling?')).toBeInTheDocument();
     expect(await screen.findByText('Multi-head self-attention')).toBeInTheDocument();
     expect(screen.getByText('Masked language modeling')).toBeInTheDocument();
+  });
+
+  it('generates a grounded answer and displays its retrieved sources', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByText('Multi-head self-attention');
+    await user.click(screen.getByRole('button', { name: 'Generate grounded answer' }));
+    expect(await screen.findByText('Evidence-grounded answer')).toBeInTheDocument();
+    expect(screen.getByText('Self-attention models dependencies without recurrence [S1].')).toBeInTheDocument();
+    expect(screen.getAllByText('Attention Is All You Need').length).toBeGreaterThan(1);
   });
 
   it('shows papers and metadata returned by the library API', async () => {

@@ -45,7 +45,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { type ChangeEvent, type FormEvent, type ReactElement, useEffect, useRef, useState } from 'react';
 import { api } from './api';
-import type { EvaluationRun, HealthStatus, Paper, SearchRequest, SearchResult } from './types';
+import type { EvaluationRun, GroundedAnswer, HealthStatus, Paper, SearchRequest, SearchResult } from './types';
 import { darkTheme, lightTheme, readThemeMode, type ThemeMode } from './theme';
 
 type Page = 'search' | 'library' | 'evaluation';
@@ -253,6 +253,9 @@ function SearchPage() {
   const [weight, setWeight] = useState(0.55);
   const [topK, setTopK] = useState(5);
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [groundedAnswer, setGroundedAnswer] = useState<GroundedAnswer | null>(null);
+  const [answerError, setAnswerError] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   const [status, setStatus] = useState<LoadStatus>('loading');
   const [error, setError] = useState('');
   const [retry, setRetry] = useState(0);
@@ -278,6 +281,8 @@ function SearchPage() {
 
   const runSearch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setGroundedAnswer(null);
+    setAnswerError('');
     if (!query.trim()) {
       setError('Enter a research question before searching.');
       setStatus('error');
@@ -292,6 +297,23 @@ function SearchPage() {
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Search failed.');
       setStatus('error');
+    }
+  };
+
+  const generateAnswer = async () => {
+    if (query.trim().length < 3) {
+      setAnswerError('Enter a research question with at least 3 characters.');
+      return;
+    }
+    setIsGenerating(true);
+    setGroundedAnswer(null);
+    setAnswerError('');
+    try {
+      setGroundedAnswer(await api.answer({ question: query, dense_weight: weight, top_k: topK }));
+    } catch (reason: unknown) {
+      setAnswerError(reason instanceof Error ? reason.message : 'Grounded answer generation failed.');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -327,6 +349,9 @@ function SearchPage() {
           </Field>
           <div className="form-footnote"><Caption1>Questions and evidence are processed on this machine.</Caption1></div>
           <Button type="submit" appearance="primary" icon={<SearchRegular />} className="full-button">Search papers</Button>
+          <Button type="button" appearance="secondary" icon={<DocumentRegular />} className="full-button" disabled={isGenerating} onClick={generateAnswer}>
+            {isGenerating ? 'Generating grounded answer…' : 'Generate grounded answer'}
+          </Button>
         </form>
 
         <section className="results-column" aria-labelledby="results-heading">
@@ -334,6 +359,9 @@ function SearchPage() {
           {status === 'loading' && <LoadingState label="ranked evidence" />}
           {status === 'error' && <ErrorState title={error || 'Search could not be completed'} onRetry={() => setRetry((value) => value + 1)} />}
           {status === 'empty' && <EmptyState title="No matching evidence yet" body="Try a broader research question or add papers to your local corpus." action="Browse the library" onAction={() => { window.history.pushState({}, '', '/library'); window.dispatchEvent(new PopStateEvent('popstate')); }} />}
+          {isGenerating && <Card className="answer-progress"><ProgressBar /><Body1>Loading the local answer model and grounding a response in retrieved passages…</Body1></Card>}
+          {answerError && <MessageBar intent="error" className="error-state"><ErrorCircleRegular /><MessageBarBody><MessageBarTitle>Grounded answer unavailable</MessageBarTitle>{answerError}</MessageBarBody></MessageBar>}
+          {groundedAnswer && <GroundedAnswerPanel result={groundedAnswer} />}
           {status === 'data' && (
             <div className="evidence-list" id="results-heading">
               {results.slice(0, topK).map((result) => <EvidenceCard key={`${result.paper_id}-${result.rank}`} result={result} />)}
@@ -342,6 +370,26 @@ function SearchPage() {
         </section>
       </div>
     </>
+  );
+}
+
+function GroundedAnswerPanel({ result }: { result: GroundedAnswer }) {
+  return (
+    <Card className="grounded-answer" aria-labelledby="grounded-answer-heading">
+      <SectionHeading icon={<DocumentRegular />} title="Evidence-grounded answer" detail={result.model} />
+      <Body1 className="grounded-answer-text">{result.answer}</Body1>
+      <div className="answer-sources" aria-label="Retrieved sources">
+        {result.sources.map((source) => (
+          <div className="answer-source" key={`${source.paper_id}-${source.rank}`}>
+            <Badge appearance="tint" color="informative">[S{source.rank}]</Badge>
+            <div>
+              <strong>{source.title}</strong>
+              <Caption1>{source.section} · {source.snippet}</Caption1>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }
 

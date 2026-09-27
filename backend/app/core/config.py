@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     embedding_model: str = Field(
         default="sentence-transformers/all-MiniLM-L6-v2", alias="EMBEDDING_MODEL"
     )
+    generation_model: str = Field(default="google/flan-t5-small", alias="GENERATION_MODEL")
 
     @property
     def upload_dir(self) -> Path:

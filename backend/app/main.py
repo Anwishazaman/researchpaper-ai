@@ -11,7 +11,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routes import evaluation, health, papers, search
+from app.api.routes import answers, evaluation, health, papers, search
 from app.core.config import Settings, get_settings
 from app.services.library import PaperLibrary
 
@@ -105,6 +105,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(health.router, prefix="/api", tags=["health"])
     application.include_router(papers.router, prefix="/api", tags=["papers"])
     application.include_router(search.router, prefix="/api", tags=["search"])
+    application.include_router(answers.router, prefix="/api", tags=["answers"])
     application.include_router(evaluation.router, prefix="/api", tags=["evaluation"])
     return application
 

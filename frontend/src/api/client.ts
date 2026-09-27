@@ -1,4 +1,4 @@
-import type { EvaluationRun, HealthStatus, Paper, SearchRequest, SearchResult, UploadResult } from '../types';
+import type { AnswerRequest, EvaluationRun, GroundedAnswer, HealthStatus, Paper, SearchRequest, SearchResult, UploadResult } from '../types';
 import type { ApiClient } from './types';
 
 interface ApiErrorResponse {
@@ -44,6 +44,13 @@ const liveClient: ApiClient = {
       body: JSON.stringify(searchRequest),
     });
     return response.results;
+  },
+  async answer(answerRequest: AnswerRequest): Promise<GroundedAnswer> {
+    return request<GroundedAnswer>('/api/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(answerRequest),
+    });
   },
   async getEvaluation(topK: number): Promise<EvaluationRun[]> {
     const response = await request<{ runs: EvaluationRun[] }>(`/api/evaluation?top_k=${topK}`);

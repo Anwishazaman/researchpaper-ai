@@ -47,6 +47,18 @@ class SearchResponse(BaseModel):
     results: list[SearchResult]
 
 
+class AnswerRequest(BaseModel):
+    question: str = Field(min_length=3, max_length=2000)
+    dense_weight: float = Field(default=0.55, ge=0, le=1)
+    top_k: int = Field(default=5, ge=1, le=10)
+
+
+class AnswerResponse(BaseModel):
+    answer: str
+    model: str
+    sources: list[SearchResult]
+
+
 class EvaluationRun(BaseModel):
     method: Literal["bm25", "hybrid"]
     precision_at_k: float

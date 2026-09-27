@@ -118,6 +118,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .benchmark-actions [data-role='field'] { width: 160px; }
 .action-buttons { display: flex; gap: 8px; }
 .state-panel { display: flex; flex-direction: column; gap: 12px; padding: 19px; }
+.answer-progress { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
+.answer-progress p, .grounded-answer-text { margin: 0; }
+.grounded-answer { display: flex; flex-direction: column; gap: 15px; padding: 18px; }
+.grounded-answer h2 { font-size: 18px; }
+.grounded-answer-text { white-space: pre-wrap; line-height: 1.65; }
+.answer-sources { display: flex; flex-direction: column; border-top: 1px solid var(--border); }
+.answer-source { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.answer-source strong, .answer-source span { display: block; }
+.answer-source [data-text-content] { overflow-wrap: anywhere; }
+.answer-source [class*='caption'] { display: block; margin-top: 4px; color: var(--muted); line-height: 1.45; }
 .state-panel [aria-hidden='true'] { display: flex; flex-direction: column; gap: 11px; }
 .skeleton-heading { width: 43%; height: 18px; }
 .skeleton-line { width: 100%; height: 12px; }

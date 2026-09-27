@@ -1,6 +1,6 @@
 # ResearchPaper AI
 
-A beginner-friendly, local-first research-paper workbench. Search the bundled demo corpus, add local PDFs, and compare keyword BM25 with hybrid semantic retrieval and labeled offline evaluation. Uploaded files and generated indexes remain on your machine; there are no hosted LLM or external paper-service dependencies.
+A beginner-friendly, local-first research-paper workbench. Search the bundled demo corpus, add local PDFs, compare keyword BM25 with hybrid semantic retrieval, and generate evidence-grounded answers with a local Hugging Face model. Uploaded files, model caches, and generated indexes remain on your machine; there are no hosted LLM or external paper-service dependencies.
 
 ## Quick start
 
@@ -8,7 +8,7 @@ Use CPython 3.12 for the scientific package stack and Node.js 20 or newer.
 
 1. Install and run the API by following [backend/README.md](backend/README.md).
 2. In another terminal, run `npm --prefix frontend install` and `npm --prefix frontend run dev`.
-3. Open the local URL printed by Vite. The API runs at `http://127.0.0.1:8000` and its interactive docs are at `/docs`.
+3. Open the local URL printed by Vite. The API runs at `http://127.0.0.1:8000` and its interactive docs are at `/docs`. The first semantic search and grounded-answer request download their respective Hugging Face models.
 
 To run the backend tests, use `python -m pytest` from `backend/`. To run frontend tests, use `npm --prefix frontend test` from the repository root.
 

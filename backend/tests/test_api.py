@@ -34,6 +34,28 @@ def test_search_validates_and_returns_ranked_evidence(app_settings) -> None:
     assert invalid.json()["error"]["code"] == "VALIDATION_ERROR"
 
 
+def test_answer_returns_grounded_answer_and_retrieved_sources(app_settings, monkeypatch) -> None:
+    from app.services.generation import LocalAnswerGenerator
+
+    def fake_generate(_self, question, sources):
+        assert question == "What does the Transformer use for sequence modeling?"
+        assert sources
+        return "It uses stacked self-attention layers [S1]."
+
+    monkeypatch.setattr(LocalAnswerGenerator, "generate", fake_generate)
+    with TestClient(create_app(app_settings)) as client:
+        response = client.post(
+            "/api/answer",
+            json={"question": "What does the Transformer use for sequence modeling?"},
+        )
+
+    assert response.status_code == 200
+    result = response.json()
+    assert "[S1]" in result["answer"]
+    assert result["sources"][0]["title"] == "Attention Is All You Need"
+    assert result["model"] == "google/flan-t5-small"
+
+
 def test_upload_rejects_non_pdf_before_writing(app_settings) -> None:
     with TestClient(create_app(app_settings)) as client:
         response = client.post(

@@ -17,6 +17,18 @@ export interface SearchRequest {
   top_k: number;
 }
 
+export interface AnswerRequest {
+  question: string;
+  dense_weight: number;
+  top_k: number;
+}
+
+export interface GroundedAnswer {
+  answer: string;
+  model: string;
+  sources: SearchResult[];
+}
+
 export interface SearchResult {
   paper_id: string;
   title: string;

@@ -6,10 +6,18 @@ from uuid import uuid4
 
 from app.core.config import Settings
 from app.ingestion.pdf import extract_pdf_chunks
-from app.models.schemas import EvaluationRun, PaperSummary, SearchRequest, SearchResult
+from app.models.schemas import (
+    AnswerRequest,
+    AnswerResponse,
+    EvaluationRun,
+    PaperSummary,
+    SearchRequest,
+    SearchResult,
+)
 from app.retrieval.bm25 import BM25Index
 from app.retrieval.dense import DenseIndex
 from app.retrieval.hybrid import fuse_scores
+from app.services.generation import LocalAnswerGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +38,7 @@ class PaperLibrary:
         self._chunks: list[Chunk] = []
         self._bm25 = BM25Index([])
         self._dense: DenseIndex | None = None
+        self._answer_generator: LocalAnswerGenerator | None = None
         self._queries: list[dict[str, object]] = []
         self.load_demo_corpus()
         self.load_uploaded_papers()
@@ -107,7 +116,11 @@ class PaperLibrary:
             try:
                 dense_index = self._get_dense_index()
                 scores = fuse_scores(
-                    lexical_scores, dense_index.scores(request.query), request.dense_weight
+                    lexical_scores,
+                    dense_index.scores(
+                        request.query, candidate_count=max(50, request.top_k * 10)
+                    ),
+                    request.dense_weight,
                 )
             except Exception:
                 logger.exception("Dense retrieval unavailable; using BM25 for this search")
@@ -125,6 +138,23 @@ class PaperLibrary:
             )
             for rank, (position, score) in enumerate(ranked, start=1)
         ]
+
+    def answer(self, request: AnswerRequest) -> AnswerResponse:
+        search_request = SearchRequest(
+            query=request.question,
+            method="hybrid",
+            dense_weight=request.dense_weight,
+            top_k=request.top_k,
+        )
+        sources = self.search(search_request)
+        if self._answer_generator is None:
+            self._answer_generator = LocalAnswerGenerator(self._settings.generation_model)
+        answer = self._answer_generator.generate(request.question, sources)
+        return AnswerResponse(
+            answer=answer,
+            model=self._settings.generation_model,
+            sources=sources,
+        )
 
     def evaluate(self, top_k: int) -> list[EvaluationRun]:
         if not self._queries:
@@ -162,12 +192,16 @@ class PaperLibrary:
         ]
 
     def _rebuild_indexes(self) -> None:
-        self._bm25 = BM25Index([chunk.text for chunk in self._chunks])
+        indexed_texts = [
+            f"{chunk.title} {chunk.section} {chunk.text}" for chunk in self._chunks
+        ]
+        self._bm25 = BM25Index(indexed_texts)
         self._dense = None
 
     def _get_dense_index(self) -> DenseIndex:
         if self._dense is None:
             self._dense = DenseIndex(
-                [chunk.text for chunk in self._chunks], self._settings.embedding_model
+                [f"{chunk.title} {chunk.section} {chunk.text}" for chunk in self._chunks],
+                self._settings.embedding_model,
             )
         return self._dense
