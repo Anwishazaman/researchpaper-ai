@@ -1,5 +1,6 @@
 {
     "debug.onTaskErrors": "debugAnyway",
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
     "files.exclude": {
         "**/node_modules": true
     }
