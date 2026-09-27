@@ -1,0 +1,14 @@
+[
+  {"query": "How does attention improve sequence modeling?", "relevant_paper_ids": ["attention-is-all-you-need"]},
+  {"query": "How can a model avoid recurrence in sequence tasks?", "relevant_paper_ids": ["attention-is-all-you-need"]},
+  {"query": "What is the role of query and key compatibility?", "relevant_paper_ids": ["attention-is-all-you-need"]},
+  {"query": "How does self-attention represent token dependencies?", "relevant_paper_ids": ["attention-is-all-you-need"]},
+  {"query": "What does BERT mask during language model pretraining?", "relevant_paper_ids": ["bert-pretraining"]},
+  {"query": "Which objectives train bidirectional text representations?", "relevant_paper_ids": ["bert-pretraining"]},
+  {"query": "How are BERT parameters adapted to downstream tasks?", "relevant_paper_ids": ["bert-pretraining"]},
+  {"query": "What is next sentence prediction used for?", "relevant_paper_ids": ["bert-pretraining"]},
+  {"query": "How does retrieval provide evidence for generation?", "relevant_paper_ids": ["retrieval-augmented-generation"]},
+  {"query": "What is non-parametric memory in a retrieval system?", "relevant_paper_ids": ["retrieval-augmented-generation"]},
+  {"query": "How can a retriever support question answering?", "relevant_paper_ids": ["retrieval-augmented-generation"]},
+  {"query": "How does a generator use retrieved passages?", "relevant_paper_ids": ["retrieval-augmented-generation"]}
+]

@@ -1,0 +1,27 @@
+services:
+  api:
+    image: python:3.12-slim
+    working_dir: /workspace/backend
+    command: sh -c "pip install -e '.[dev]' && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    environment:
+      DATA_DIR: /workspace/data
+      ENABLE_DENSE: "true"
+    volumes:
+      - .:/workspace
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /workspace/frontend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/workspace
+      - frontend_node_modules:/workspace/frontend/node_modules
+    depends_on:
+      - api
+
+volumes:
+  frontend_node_modules:

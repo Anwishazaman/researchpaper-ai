@@ -1,0 +1,35 @@
+[
+  {
+    "id": "attention-is-all-you-need",
+    "title": "Attention Is All You Need",
+    "authors": ["Vaswani et al."],
+    "year": 2017,
+    "chunks": [
+      {"section": "Multi-head self-attention", "text": "The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality. Self-attention relates positions in a sequence to compute a representation of the sequence."},
+      {"section": "Scaled dot-product attention", "text": "The attention function maps a query and a set of key-value pairs to an output. The output is a weighted sum of values, where weights are computed from query-key compatibility."},
+      {"section": "Sequence modeling", "text": "The encoder and decoder use stacked self-attention and point-wise fully connected layers. This architecture models dependencies between sequence positions without recurrence or convolution."}
+    ]
+  },
+  {
+    "id": "bert-pretraining",
+    "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+    "authors": ["Devlin et al."],
+    "year": 2019,
+    "chunks": [
+      {"section": "Masked language modeling", "text": "The key idea is to randomly mask some of the tokens from the input, and then predict those masked tokens. This objective enables deep bidirectional representations."},
+      {"section": "Pre-training tasks", "text": "BERT is pre-trained using masked language modeling and next sentence prediction. The model learns contextual representations from unlabeled text."},
+      {"section": "Fine-tuning", "text": "A task-specific output layer is added to the pre-trained model and all parameters are fine-tuned on labeled examples for downstream language understanding."}
+    ]
+  },
+  {
+    "id": "retrieval-augmented-generation",
+    "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+    "authors": ["Lewis et al."],
+    "year": 2020,
+    "chunks": [
+      {"section": "Non-parametric memory", "text": "We combine parametric memory with a non-parametric memory, a dense vector index of Wikipedia. Retrieved documents provide explicit evidence for knowledge-intensive generation."},
+      {"section": "Retriever and generator", "text": "A neural retriever accesses documents while a sequence-to-sequence generator produces output conditioned on the query and retrieved passages."},
+      {"section": "Knowledge-intensive tasks", "text": "Retrieval-augmented models can improve open-domain question answering and fact verification by grounding generation in an external document collection."}
+    ]
+  }
+]

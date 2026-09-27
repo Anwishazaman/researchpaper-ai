@@ -1,0 +1,1 @@
+This file is intentionally not a PDF. The upload endpoint should reject it.

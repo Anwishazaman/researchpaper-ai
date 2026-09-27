@@ -1,0 +1,6 @@
+{
+    "debug.onTaskErrors": "debugAnyway",
+    "files.exclude": {
+        "**/node_modules": true
+    }
+}

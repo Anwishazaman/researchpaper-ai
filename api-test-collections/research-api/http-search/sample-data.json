@@ -1,0 +1,6 @@
+{
+  "query": "How does attention improve sequence modeling?",
+  "method": "bm25",
+  "dense_weight": 0.55,
+  "top_k": 5
+}

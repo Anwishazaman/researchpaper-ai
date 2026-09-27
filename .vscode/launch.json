@@ -1,0 +1,35 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Research API (debug)",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "127.0.0.1",
+        "port": 5678
+      },
+      "justMyCode": true,
+      "preLaunchTask": "research-api: start server"
+    },
+    {
+      "name": "Research UI (debug)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend",
+      "preLaunchTask": "research-ui: dev"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug All Services",
+      "configurations": [
+        "Research API (debug)",
+        "Research UI (debug)"
+      ],
+      "preLaunchTask": "research-api: start all services",
+      "stopAll": true
+    }
+  ]
+}
